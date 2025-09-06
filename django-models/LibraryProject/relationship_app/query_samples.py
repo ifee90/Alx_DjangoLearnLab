@@ -41,14 +41,15 @@ def list_books_in_library(library_name):
         print(f"No library found with the name {library_name}")
 
 def get_librarian_for_library(library_name):
-    """
-    Prints the librarian assigned to a given library name.
-    """
     try:
         library = Library.objects.get(name=library_name)
+        librarian = Librarian.objects.get(library=library)
+        print(f"Librarian for '{library_name}': {librarian.name}")
     except Library.DoesNotExist:
         print(f"No library found with the name {library_name}")
-        return
+    except Librarian.DoesNotExist:
+        print(f"No librarian assigned to '{library_name}'")
+
 
     try:
         # Reverse OneToOne access: Library -> Librarian
