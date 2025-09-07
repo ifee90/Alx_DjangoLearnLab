@@ -8,21 +8,20 @@ from django.contrib import messages
 from .models import Book, Library, Author
 
 # ------------------------------
-# Existing views (keep them)
+# Existing views
 # ------------------------------
 
-# Function-based view: List all books
 def list_books(request):
     books = Book.objects.all()
     return render(request, 'relationship_app/list_books.html', {'books': books})
 
-# Class-based view for Library detail
+
 class LibraryDetailView(DetailView):
     model = Library
     template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
 
-# Register view
+
 def register(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
@@ -33,6 +32,7 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
+
 
 # ------------------------------
 # Role-based access helpers
@@ -46,6 +46,7 @@ def is_librarian(user):
 
 def is_member(user):
     return hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
+
 
 # ------------------------------
 # Role-based views
@@ -63,6 +64,7 @@ def librarian_view(request):
 def member_view(request):
     return render(request, 'relationship_app/member_view.html')
 
+
 # ------------------------------
 # Permission-based views
 # ------------------------------
@@ -72,24 +74,38 @@ def add_book(request):
     if request.method == 'POST':
         title = request.POST.get('title')
         author_id = request.POST.get('author')
-        author = Author.objects.get(id=author_id)
-        Book.objects.create(title=title, author=author)
-        messages.success
+        if title and author_id:
+            try:
+                author = Author.objects.get(id=author_id)
+                Book.objects.create(title=title, author=author)
+                messages.success(request, f"Book '{title}' added successfully!")
+                return redirect('list_books')
+            except Author.DoesNotExist:
+                messages.error(request, "Selected author does not exist.")
+        else:
+            messages.error(request, "Please provide both title and author.")
+    authors = Author.objects.all()
+    return render(request, 'relationship_app/add_book.html', {'authors': authors})
+
 
 @permission_required('relationship_app.can_change_book', raise_exception=True)
-def edit_book(request, book_id):
+def change_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
     if request.method == 'POST':
         title = request.POST.get('title')
         author_id = request.POST.get('author')
-        author = get_object_or_404(Author, id=author_id)
-        book.title = title
-        book.author = author
-        book.save()
-        messages.success(request, f"Book '{title}' updated successfully!")
-        return redirect('list_books')
+        if title and author_id:
+            author = get_object_or_404(Author, id=author_id)
+            book.title = title
+            book.author = author
+            book.save()
+            messages.success(request, f"Book '{title}' updated successfully!")
+            return redirect('list_books')
+        else:
+            messages.error(request, "Please provide both title and author.")
     authors = Author.objects.all()
-    return render(request, 'relationship_app/edit_book.html', {'book': book, 'authors': authors})
+    return render(request, 'relationship_app/change_book.html', {'book': book, 'authors': authors})
+
 
 @permission_required('relationship_app.can_delete_book', raise_exception=True)
 def delete_book(request, book_id):
@@ -99,13 +115,3 @@ def delete_book(request, book_id):
         messages.success(request, f"Book '{book.title}' deleted successfully!")
         return redirect('list_books')
     return render(request, 'relationship_app/delete_book.html', {'book': book})
-
-# @permission_required('relationship_app.can_add_book', raise_exception=True)
-def add_book(request):
-    pass
-# @permission_required('relationship_app.can_change_book', raise_exception=True)
-def change_book(request):
-    pass
-# @permission_required('relationship_app.can_delete_book', raise_exception=True)
-def delete_book(request):
-    pass
