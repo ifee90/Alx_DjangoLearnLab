@@ -2,9 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.views.generic import DetailView
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, permission_required
+from django.contrib import messages  # fixed typo
 
-from .models import Book, Library
+from .models import Book, Library, Author
 
 # ------------------------------
 # Existing views (keep them)
@@ -33,7 +34,6 @@ def register(request):
         form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
 
-
 # ------------------------------
 # Role-based access helpers
 # ------------------------------
@@ -46,7 +46,6 @@ def is_librarian(user):
 
 def is_member(user):
     return hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
-
 
 # ------------------------------
 # Role-based views
@@ -63,3 +62,12 @@ def librarian_view(request):
 @user_passes_test(is_member)
 def member_view(request):
     return render(request, 'relationship_app/member_view.html')
+
+# ------------------------------
+# Permission-based views
+# ------------------------------
+
+@permission_required('relationship_app.can_add_book', raise_exception=True)
+def add_book(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
