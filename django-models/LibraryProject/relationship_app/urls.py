@@ -7,7 +7,9 @@ from .views import (
     admin_view,
     librarian_view,
     member_view,
-    add_book,  # <-- added here
+    add_book,
+    edit_book,
+    delete_book,
 )
 
 urlpatterns = [
@@ -23,6 +25,8 @@ urlpatterns = [
     path('librarian-view/', librarian_view, name='librarian_view'),
     path('member-view/', member_view, name='member_view'),
 
-    # Permission-based route
-    path('add-book/', add_book, name='add_book'),  # <-- new Add Book URL
+    # Permission-based routes for Book management
+    path('books/add/', add_book, name='add_book'),
+    path('books/edit/<int:book_id>/', edit_book, name='edit_book'),
+    path('books/delete/<int:book_id>/', delete_book, name='delete_book'),
 ]
