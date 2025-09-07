@@ -1,21 +1,17 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Books List</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
-<body>
+{% extends "relationship_app/base.html" %}
+
+{% block content %}
     <h1>Books</h1>
     <ul>
         {% for book in books %}
             <li>
                 {{ book.title }} by {{ book.author }}
-                (Library: <a href="{% url 'library_detail' book.library.id %}">{{ book.library.name }}</a>)
+                {% if book.library %}
+                    (Library: <a href="{% url 'library_detail' book.library.id %}">{{ book.library.name }}</a>)
+                {% endif %}
             </li>
         {% endfor %}
     </ul>
-</body>
-</html>
+{% endblock %}
+
 
