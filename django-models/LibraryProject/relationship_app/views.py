@@ -10,6 +10,6 @@ def list_books(request):
 # Class-based view: Library details (HTML template)
 class LibraryDetailView(DetailView):
     model = Library
-    template_name = 'library_detail.html'  # ensure this file exists in templates/
+    template_name = 'relationship_app/library_detail.html'  # ensure this file exists in templates/
     context_object_name = 'library'
 
