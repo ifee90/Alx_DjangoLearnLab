@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Library Project</title>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'list_books' %}">Books</a> |
+        <a href="{% url 'register' %}">Register</a> |
+        {% if user.is_authenticated %}
+            <span>Logged in as {{ user.username }}</span>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+    </nav>
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>
