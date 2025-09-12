@@ -1,19 +1,17 @@
 <h1>Edit Book</h1>
+
 <form method="post">
   {% csrf_token %}
-  <label>Title:</label>
-  <input type="text" name="title" value="{{ book.title }}"><br><br>
-  
-  <label>Author:</label>
-  <select name="author">
-    {% for author in authors %}
-      <option value="{{ author.id }}" {% if book.author.id == author.id %}selected{% endif %}>
-        {{ author.name }}
-      </option>
-    {% endfor %}
-  </select><br><br>
-  
+  {{ form.as_p }}
   <button type="submit">Update Book</button>
 </form>
+
+{% if messages %}
+  <ul>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
 
 <a href="{% url 'list_books' %}">Back to book list</a>

@@ -1,29 +1,17 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Add Book</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
-<body>
-    <h1>Add a New Book</h1>
+<h1>Add Book</h1>
 
-    <form method="post">
-        {% csrf_token %}
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title" required><br><br>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Add Book</button>
+</form>
 
-        <label for="author">Author:</label>
-        <select id="author" name="author" required>
-            {% for author in authors %}
-                <option value="{{ author.id }}">{{ author.name }}</option>
-            {% endfor %}
-        </select><br><br>
+{% if messages %}
+  <ul>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
 
-        <button type="submit">Add Book</button>
-    </form>
-
-    <p><a href="{% url 'list_books' %}">Back to Books List</a></p>
-</body>
-</html>
+<a href="{% url 'list_books' %}">Back to book list</a>

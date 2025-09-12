@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Author(models.Model):
     name = models.CharField(max_length=100)
@@ -6,12 +7,14 @@ class Author(models.Model):
     def __str__(self):
         return self.name
 
+
 class Library(models.Model):
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
+
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
@@ -28,10 +31,17 @@ class Book(models.Model):
             ("can_delete_book", "Can delete book"),
         )
 
+
 class UserProfile(models.Model):
-    # Assuming you already have this for roles
-    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
-    role = models.CharField(max_length=20, choices=(('Admin', 'Admin'), ('Librarian', 'Librarian'), ('Member', 'Member')))
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(
+        max_length=20,
+        choices=(
+            ('Admin', 'Admin'),
+            ('Librarian', 'Librarian'),
+            ('Member', 'Member'),
+        )
+    )
 
     def __str__(self):
         return self.user.username
