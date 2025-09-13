@@ -1,8 +1,10 @@
 from django.contrib import admin
-from .models import Author, Book, Library, UserProfile
 
-# Register your models
-admin.site.register(Author)
-admin.site.register(Book)
-admin.site.register(Library)
-admin.site.register(UserProfile)  # <-- add this line
+# relationship_app has no local models to register.
+# The Author, Library, Book and CustomUser models live in the 'bookshelf' app
+# and are already (or should be) registered in bookshelf/admin.py.
+# Keep this file minimal to avoid import errors.
+
+# If you later add models to relationship_app, register them here, e.g.:
+# from .models import SomeModel
+# admin.site.register(SomeModel)
