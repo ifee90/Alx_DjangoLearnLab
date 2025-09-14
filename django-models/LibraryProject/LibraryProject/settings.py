@@ -82,9 +82,6 @@ DATABASES = {
     }
 }
 
-# Custom user model
-AUTH_USER_MODEL = 'bookshelf.CustomUser'
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -127,10 +124,13 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 # Redirects after login/logout
 LOGIN_REDIRECT_URL = '/books/'
 LOGOUT_REDIRECT_URL = '/login/'
 
+# Custom user model (ALX requires this exact line)
+AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
 
 
