@@ -1,7 +1,12 @@
+# forms.py
 from django import forms
-from bookshelf.models import Book
+from .models import Book, Author
 
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
-        fields = ['title', 'author', 'library']
+        fields = ['title', 'author']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'author': forms.Select(attrs={'class': 'form-control'}),
+        }

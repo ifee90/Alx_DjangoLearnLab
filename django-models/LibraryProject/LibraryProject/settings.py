@@ -9,18 +9,18 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(file).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_k+thr#en=r2%j&n1zvc__sxt+zgf)9c=sp##fchqbr^^gv#f*'
+SECRET_KEY = 'django-insecure-nmlv_4e^)_%&3s9aqx(=w8v^nl@u*e04kp3p3!_)7+9t_vxa_q'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,13 +31,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "bookshelf",  # <-- replace with your app name
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'bookshelf',
+    'relationship_app',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +56,7 @@ ROOT_URLCONF = 'LibraryProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'relationship_app', 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -121,19 +122,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# settings.py
+LOGIN_REDIRECT_URL = '/books/'
 
-LOGIN_REDIRECT_URL = "list_books"   # after login, go to books page
-LOGOUT_REDIRECT_URL = "login"       # after logout, go back to login
-
-
-
-INSTALLED_APPS = [
-    ...,
-    "bookshelf",  # register the app
-]
-
-AUTH_USER_MODEL = "bookshelf.CustomUser"
-
-# Media setup (for profile photos)
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
