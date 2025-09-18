@@ -1,14 +1,20 @@
 from pathlib import Path
 
+# ---------------------------
 # Base directory
+# ---------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ---------------------------
 # Security
-SECRET_KEY = 'django-insecure-your-secret-key'  # (we’ll replace later if needed)
+# ---------------------------
+SECRET_KEY = 'django-insecure-your-secret-key'  # Replace if needed
 DEBUG = True
 ALLOWED_HOSTS = []
 
+# ---------------------------
 # Installed apps
+# ---------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -16,12 +22,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-party apps
     'rest_framework',
+    'rest_framework.authtoken',  # <- Enables Token Authentication
+
+    # Local apps
     'api',
-    'rest_framework.authtoken',
 ]
 
+# ---------------------------
 # Middleware
+# ---------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -32,10 +44,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# ---------------------------
 # Root URL configuration
+# ---------------------------
 ROOT_URLCONF = 'api_project.urls'
 
+# ---------------------------
 # Templates
+# ---------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -52,10 +68,14 @@ TEMPLATES = [
     },
 ]
 
+# ---------------------------
 # WSGI application
+# ---------------------------
 WSGI_APPLICATION = 'api_project.wsgi.application'
 
-# Database (using sqlite3 for now)
+# ---------------------------
+# Database
+# ---------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -63,7 +83,9 @@ DATABASES = {
     }
 }
 
+# ---------------------------
 # Password validation
+# ---------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -71,14 +93,35 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Language and timezone
+# ---------------------------
+# Internationalization
+# ---------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
+# ---------------------------
 # Static files
+# ---------------------------
 STATIC_URL = 'static/'
 
+# ---------------------------
 # Default primary key field type
+# ---------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ---------------------------
+# Django REST Framework settings
+# ---------------------------
+REST_FRAMEWORK = {
+    # Enable Token Authentication for all API requests
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+
+    # Require authentication by default
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
