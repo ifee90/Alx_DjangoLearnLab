@@ -8,3 +8,8 @@ __pycache__/
 *.log
 *.egg-info/
 .DS_Store
+venv/
+db.sqlite3
+*.pyc
+__pycache__/
+.DS_Store
