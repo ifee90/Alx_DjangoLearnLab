@@ -23,8 +23,6 @@ from .views import (
 # ----------------------------
 # Router setup for Author endpoints
 # ----------------------------
-# Using DefaultRouter to automatically generate routes for AuthorViewSet.
-# Provides: /authors/ (list + create) and /authors/{id}/ (retrieve, update, delete).
 router = DefaultRouter()
 router.register(r'authors', AuthorViewSet)
 
@@ -33,13 +31,13 @@ router.register(r'authors', AuthorViewSet)
 # ----------------------------
 urlpatterns = [
     # Author endpoints (ViewSet-based)
-    path('', include(router.urls)),  
+    path('', include(router.urls)),
 
     # Book endpoints (Generic Views-based)
-    path("books-generic/", BookListView.as_view(), name="book-list"),  
-    path("books-generic/<int:pk>/", BookDetailView.as_view(), name="book-detail"),  
-    path("books-generic/create/", BookCreateView.as_view(), name="book-create"),  
-    path("books-generic/<int:pk>/update/", BookUpdateView.as_view(), name="book-update"),  
-    path("books-generic/<int:pk>/delete/", BookDeleteView.as_view(), name="book-delete"),  
+    path("books/", BookListView.as_view(), name="book-list"),  
+    path("books/<int:pk>/", BookDetailView.as_view(), name="book-detail"),  
+    path("books/create/", BookCreateView.as_view(), name="book-create"),  
+    path("books/<int:pk>/update/", BookUpdateView.as_view(), name="book-update"),  
+    path("books/<int:pk>/delete/", BookDeleteView.as_view(), name="book-delete"),  
 ]
 
