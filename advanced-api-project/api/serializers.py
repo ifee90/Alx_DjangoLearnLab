@@ -1,34 +1,45 @@
+"""
+serializers.py
+---------------
+This module defines serializers for the Author and Book models.
+Serializers handle the conversion of model instances to JSON and
+validate input data for creating/updating records.
+"""
+
 from rest_framework import serializers
 from .models import Author, Book
 
-# ----------------------------
-# BookSerializer
-# ----------------------------
-# This serializer is responsible for handling the Book model.
-# It serializes all fields of the Book (title, publication_year, author).
-# It also includes a custom validation to prevent using a future year.
+
 class BookSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Book model.
+    - Serializes all fields of a Book (title, publication_year, author).
+    - Includes custom validation to prevent a future publication year.
+    """
     class Meta:
         model = Book
         fields = '__all__'
 
-    # Custom validation method for publication_year
     def validate_publication_year(self, value):
+        """
+        Ensure the publication year is not set in the future.
+        """
         from datetime import datetime
         current_year = datetime.now().year
         if value > current_year:
-            raise serializers.ValidationError("Publication year cannot be in the future.")
+            raise serializers.ValidationError(
+                "Publication year cannot be in the future."
+            )
         return value
 
 
-# ----------------------------
-# AuthorSerializer
-# ----------------------------
-# This serializer is responsible for handling the Author model.
-# It includes the author's name and a nested list of their books.
-# The 'books' field uses BookSerializer to serialize related Book objects.
 class AuthorSerializer(serializers.ModelSerializer):
-    # 'related_name="books"' from models lets us access all books for an author
+    """
+    Serializer for the Author model.
+    - Includes the author's id and name.
+    - Adds a nested list of the author's books using BookSerializer.
+    """
+    # 'books' comes from the related_name="books" in the Book model's ForeignKey
     books = BookSerializer(many=True, read_only=True)
 
     class Meta:
