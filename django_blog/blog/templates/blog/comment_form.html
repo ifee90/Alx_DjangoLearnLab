@@ -1,6 +1,8 @@
 {% extends "blog/base.html" %}
 
-{% block title %}Edit Comment{% endblock %}
+{% block title %}
+    {% if object %}Edit Comment{% else %}Add Comment{% endif %}
+{% endblock %}
 
 {% block content %}
 <h1>{% if object %}Edit{% else %}Add{% endif %} Comment</h1>
@@ -8,8 +10,12 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Submit</button>
+    <button type="submit">Save Comment</button>
 </form>
 
-<a href="{{ object.post.get_absolute_url }}">Back to Post</a>
+{% if object %}
+    <a href="{{ object.post.get_absolute_url }}">Back to Post</a>
+{% else %}
+    <a href="{{ request.META.HTTP_REFERER }}">Back</a>
+{% endif %}
 {% endblock %}
