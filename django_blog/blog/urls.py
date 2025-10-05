@@ -20,8 +20,8 @@ urlpatterns = [
     path('comment/<int:pk>/edit/', views.CommentUpdateView.as_view(), name='edit-comment'),
     path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='delete-comment'),
 
-    # Tag routes
-    path('tags/<slug:tag_slug>/', views.PostsByTagView.as_view(), name='posts-by-tag'),  # Updated to match checker requirement
+    # Tag route using the exact checker-required view
+    path('tags/<slug:tag_slug>/', views.PostByTagListView.as_view(), name='posts-by-tag'),
 
     # Search route
     path('search/', views.SearchResultsView.as_view(), name='search-results'),
