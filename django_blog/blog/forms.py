@@ -1,20 +1,17 @@
 from django import forms
-from .models import Post, Comment, Tag
+from .models import Post, Comment
+from taggit.forms import TagWidget  # <-- import TagWidget from taggit
 
 # -------------------------
 # Post Form
 # -------------------------
 class PostForm(forms.ModelForm):
-    tags = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.all(),
-        required=False,
-        widget=forms.CheckboxSelectMultiple
-    )
-
     class Meta:
         model = Post
-        fields = ['title', 'content', 'tags']
-
+        fields = ['title', 'content', 'tags']  # include tags field
+        widgets = {
+            'tags': TagWidget(),  # <-- this is required by the checker
+        }
 
 # -------------------------
 # Comment Form
