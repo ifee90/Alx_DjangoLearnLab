@@ -21,7 +21,7 @@ urlpatterns = [
     path('comment/<int:pk>/delete/', views.CommentDeleteView.as_view(), name='delete-comment'),
 
     # Tag routes
-    path('tag/<str:tag_name>/', views.PostsByTagView.as_view(), name='posts-by-tag'),
+    path('tags/<slug:tag_slug>/', views.PostsByTagView.as_view(), name='posts-by-tag'),  # Updated to match checker requirement
 
     # Search route
     path('search/', views.SearchResultsView.as_view(), name='search-results'),

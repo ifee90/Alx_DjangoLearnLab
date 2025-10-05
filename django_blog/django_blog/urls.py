@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    # Admin
     path('admin/', admin.site.urls),
 
     # Authentication routes using Django's built-in views
@@ -12,4 +13,3 @@ urlpatterns = [
     # Include all blog app URLs
     path('', include('blog.urls')),
 ]
-
