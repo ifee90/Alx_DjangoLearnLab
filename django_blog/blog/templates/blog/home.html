@@ -1,9 +1,42 @@
 {% extends "blog/base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Home - Django Blog{% endblock %}
 
 {% block content %}
-<h1>Welcome to the Blog Home Page!</h1>
-<p>You can <a href="{% url 'login' %}">login</a> or <a href="{% url 'register' %}">register</a>.</p>
-{% endblock %}
+<section class="home-section">
+    <h1>Welcome to Django Blog 📝</h1>
+    <p>Your space to share, learn, and explore amazing ideas.</p>
 
+    <div class="actions">
+        {% if user.is_authenticated %}
+            <p>Hello, {{ user.username }}!</p>
+            <a href="{% url 'post-list' %}" class="btn">View All Posts</a>
+            <a href="{% url 'post-create' %}" class="btn">Create New Post</a>
+        {% else %}
+            <p>You can <a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Register</a> to start posting.</p>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <!-- 🔍 Search Bar -->
+    <form method="get" action="{% url 'search-results' %}" class="search-form">
+        <input type="text" name="q" placeholder="Search posts by title, content, or tag..." required>
+        <button type="submit">Search</button>
+    </form>
+
+    <hr>
+
+    <!-- 🏷️ Tag List -->
+    <h2>Explore by Tags</h2>
+    {% if tags %}
+        <ul>
+            {% for tag in tags %}
+                <li><a href="{% url 'posts-by-tag' tag.name %}">{{ tag.name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No tags available yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

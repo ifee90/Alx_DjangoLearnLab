@@ -19,6 +19,12 @@
                 <li><a href="{% url 'register' %}">Register</a></li>
                 <li><a href="{% url 'profile' %}">Profile</a></li>
             </ul>
+
+            <!-- 🔍 Search form -->
+            <form method="get" action="{% url 'search-results' %}" style="display:inline; margin-left:20px;">
+                <input type="text" name="q" placeholder="Search posts..." required>
+                <button type="submit">Search</button>
+            </form>
         </nav>
     </header>
 
