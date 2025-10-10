@@ -1,3 +1,4 @@
+from rest_framework import permissions
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -10,6 +11,7 @@ from .serializers import RegisterSerializer, LoginSerializer
 class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = RegisterSerializer
+    permission_classes = [permissions.AllowAny]  # <-- add this line
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
