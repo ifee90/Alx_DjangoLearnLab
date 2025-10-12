@@ -62,9 +62,9 @@ def user_feed(request):
 def like_post(request, pk):
     """
     Allows a user to like a post.
-    Prevents multiple likes by the same user.
+    Prevents multiple likes by the same user using get_or_create.
     """
-    post = generics.get_object_or_404(Post, pk=pk)
+    post = get_object_or_404(Post, pk=pk)
     user = request.user
 
     like, created = Like.objects.get_or_create(user=user, post=post)
@@ -75,3 +75,29 @@ def like_post(request, pk):
     if post.author != user:
         Notification.objects.create(
             recipient=post.author,
+            actor=user,
+            verb='liked your post',
+            target=post
+        )
+
+    return Response({'message': 'Post liked successfully.'}, status=status.HTTP_200_OK)
+
+
+# -----------------------------
+# Unlike a Post
+# -----------------------------
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def unlike_post(request, pk):
+    """
+    Allows a user to unlike a post they previously liked.
+    """
+    post = get_object_or_404(Post, pk=pk)
+    user = request.user
+
+    like = Like.objects.filter(user=user, post=post).first()
+    if not like:
+        return Response({'message': 'You have not liked this post.'})
+
+    like.delete()
+    return Response({'message': 'Post unliked successfully.'}, status=status.HTTP_200_OK)
