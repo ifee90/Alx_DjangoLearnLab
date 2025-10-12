@@ -2,8 +2,9 @@ from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
-from .models import Post, Comment
+from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer
+from notifications.models import Notification  # For creating notifications
 
 
 # -----------------------------
@@ -51,3 +52,53 @@ def user_feed(request):
 
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
+
+
+# -----------------------------
+# Like a Post
+# -----------------------------
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def like_post(request, pk):
+    """
+    Allows a user to like a post.
+    Prevents multiple likes by the same user.
+    """
+    post = get_object_or_404(Post, pk=pk)
+    user = request.user
+
+    if Like.objects.filter(user=user, post=post).exists():
+        return Response({'message': 'You have already liked this post.'})
+
+    Like.objects.create(user=user, post=post)
+
+    # Create notification for the post author
+    if post.author != user:
+        Notification.objects.create(
+            recipient=post.author,
+            actor=user,
+            verb='liked your post',
+            target=post
+        )
+
+    return Response({'message': 'Post liked successfully.'})
+
+
+# -----------------------------
+# Unlike a Post
+# -----------------------------
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def unlike_post(request, pk):
+    """
+    Allows a user to unlike a post they previously liked.
+    """
+    post = get_object_or_404(Post, pk=pk)
+    user = request.user
+
+    like = Like.objects.filter(user=user, post=post).first()
+    if not like:
+        return Response({'message': 'You have not liked this post.'})
+
+    like.delete()
+    return Response({'message': 'Post unliked successfully.'})

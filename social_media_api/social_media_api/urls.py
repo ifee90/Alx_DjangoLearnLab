@@ -15,6 +15,9 @@ urlpatterns = [
     # ✅ Posts endpoints (create post, list posts, feed, comments, etc.)
     path('api/posts/', include('posts.urls')),
 
+    # ✅ Notifications endpoints (view user notifications)
+    path('api/notifications/', include('notifications.urls')),
+
     # ✅ Optional root route for sanity check
     path('', home),
 ]
