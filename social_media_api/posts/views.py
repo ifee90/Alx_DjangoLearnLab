@@ -1,36 +1,53 @@
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from django.shortcuts import get_object_or_404
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 
 
-class IsAuthorOrReadOnly(permissions.BasePermission):
-    """
-    Custom permission to allow only the author of a post or comment to edit or delete it.
-    """
-
-    def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        # Write permissions only for the author
-        return obj.author == request.user
-
-
+# -----------------------------
+# Post ViewSet (CRUD)
+# -----------------------------
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all().order_by('-created_at')
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['title', 'content']
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        # Return posts in reverse chronological order
+        return Post.objects.all().order_by('-created_at')
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
 
+# -----------------------------
+# Comment ViewSet (CRUD)
+# -----------------------------
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all().order_by('-created_at')
     serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        return Comment.objects.all().order_by('-created_at')
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+# -----------------------------
+# Feed View — show posts from followed users
+# -----------------------------
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def user_feed(request):
+    """
+    Returns a list of posts created by users that the current user follows.
+    Ordered from newest to oldest.
+    """
+    user = request.user
+    following_users = user.following.all()  # Users that the current user follows
+    posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
+
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
