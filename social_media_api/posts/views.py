@@ -1,7 +1,6 @@
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from django.shortcuts import get_object_or_404
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer
 from notifications.models import Notification  # For creating notifications
@@ -47,7 +46,7 @@ def user_feed(request):
     Ordered from newest to oldest.
     """
     user = request.user
-    following_users = user.following.all()  # Users that the current user follows
+    following_users = user.following.all()
     posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
 
     serializer = PostSerializer(posts, many=True)
@@ -62,20 +61,19 @@ def user_feed(request):
 def like_post(request, pk):
     """
     Allows a user to like a post.
-    Prevents multiple likes by the same user using get_or_create.
+    Prevents multiple likes by the same user.
     """
-    post = get_object_or_404(Post, pk=pk)
-    user = request.user
+    post = generics.get_object_or_404(Post, pk=pk)
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
 
-    like, created = Like.objects.get_or_create(user=user, post=post)
     if not created:
         return Response({'message': 'You have already liked this post.'})
 
     # Create notification for the post author
-    if post.author != user:
+    if post.author != request.user:
         Notification.objects.create(
             recipient=post.author,
-            actor=user,
+            actor=request.user,
             verb='liked your post',
             target=post
         )
@@ -92,10 +90,9 @@ def unlike_post(request, pk):
     """
     Allows a user to unlike a post they previously liked.
     """
-    post = get_object_or_404(Post, pk=pk)
-    user = request.user
+    post = generics.get_object_or_404(Post, pk=pk)
+    like = Like.objects.filter(user=request.user, post=post).first()
 
-    like = Like.objects.filter(user=user, post=post).first()
     if not like:
         return Response({'message': 'You have not liked this post.'})
 
