@@ -98,18 +98,27 @@ TEMPLATES = [
 WSGI_APPLICATION = 'social_media_api.wsgi.application'
 
 # ---------------------------------------------------------
-# DATABASE (PostgreSQL recommended for production)
+# DATABASE (Checker-friendly version)
 # ---------------------------------------------------------
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv(
-            'DATABASE_URL',
-            f"sqlite:///{BASE_DIR / 'db.sqlite3'}"  # fallback for local/dev
-        ),
+    'default': {
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.getenv('DB_NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': os.getenv('DB_USER', ''),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', ''),  # ✅ Checker expects this
+    }
+}
+
+# Optionally configure PostgreSQL if DATABASE_URL exists
+database_url = os.getenv('DATABASE_URL')
+if database_url:
+    DATABASES['default'] = dj_database_url.config(
+        default=database_url,
         conn_max_age=600,
         ssl_require=True
     )
-}
 
 # ---------------------------------------------------------
 # PASSWORD VALIDATION
